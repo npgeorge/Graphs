@@ -120,59 +120,139 @@ class Graph:
                 for neighbor in neighbors:
                     self.dft_recursive(neighbor, visited)
 
+#    def bfs(self, starting_vertex, destination_vertex):
+#        """
+#        Return a list containing the shortest path from
+#        starting_vertex to destination_vertex in
+#        breath-first order.
+#
+#        1. stop when we find the target node
+#         - we can check this inside the while loop
+#         - check at the current node
+#
+#        2. return the path we took to get there
+#         - note, this will automatically be the shortest path
+#
+#        Enqueue a PATH TO the starting node, instead of just the starting node
+#        """
+#        # make a queue
+#        q = Queue()
+#
+#        # make a set to track which nodes we have visited
+#        visited = set()
+#
+#        # enqueue the starting node
+#        # adding brackets gets us the PATH TO the starting vertex
+#        q.enqueue([starting_vertex])
+#
+#        # loop while the queue isn't empty
+#        while q.size() > 0:
+#            # dequeue, this is our current node
+#            current_path = q.dequeue()
+#            current_node = current_path[-1]
+#
+#            # check if we have found our target node
+#            if current_node == destination_vertex:
+#                return current_path
+#
+#            # check if we've visited
+#            if current_node not in visited:
+#                print(current_node)
+#            # if not, go to the next node
+#            ## make as visited == add to visited set
+#                visited.add(current_node)
+#            ## get the neighbors
+#                neighbors = self.get_neighbors(current_node)
+#            ## enqueue the PATH TO the neighbors
+#                for neighbor in neighbors:
+#                    # ex.)
+#                    # suppose we are at node 3, current_path is [1,2,3]
+#                    # neighbor is 5
+#                    # we need this --> [1,2,3,5]
+#                    # need to make a copy of the current path, and enqueue to it
+#                    # path_copy = current_path.copy()
+#                    path_copy = current_path + [neighbor]
+#                    q.enqueue(path_copy)
+#
+#        return None
+
     def bfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing the shortest path from
         starting_vertex to destination_vertex in
         breath-first order.
-
-        1. stop when we find the target node
-         - we can check this inside the while loop
-         - check at the current node
-
-        2. return the path we took to get there
-         - note, this will automatically be the shortest path
-
-        Enqueue a PATH TO the starting node, instead of just the starting node
         """
-        # make a queue
         q = Queue()
+        # map of node names to their parent
+        # also used to keep track of visited nodes
+        visited = {}
 
-        # make a set to track which nodes we have visited
-        visited = set()
+        q.enqueue(starting_vertex)
+        visited[starting_vertex] = None
+        while q.size() > 0:
+            name = q.dequeue()
 
-        # enqueue the starting node
-        # adding brackets gets us the PATH TO the starting vertex
-        q.enqueue([starting_vertex])
+            # check for match
+            if name == destination_vertex:
+                path = []
+                cur = name
+                while cur:
+                    path.append(cur)
+                    cur = visited[cur]
 
-        # loop while the queue isn't empty
-        while q.size() is not None:
-            # dequeue, this is our current node
-            current_path = q.dequeue()
-            current_node = current_path[-1]
+                return list(reversed(path))
 
-            # check if we have found our target node
-            if current_node == destination_vertex:
-                return current_path
+            for neighbor in self.get_neighbors(name):
+                if neighbor not in visited:
+                    q.enqueue(neighbor)
+                    visited[neighbor] = name
 
-            # check if we've visited
-            if current_node not in visited:
-                print(current_node)
-            # if not, go to the next node
-            ## make as visited == add to visited set
-                visited.add(current_node)
-            ## get the neighbors
-                neighbors = self.get_neighbors(current_node)
-            ## enqueue the PATH TO the neighbors
-                for neighbor in neighbors:
-                    # ex.)
-                    # suppose we are at node 3, current_path is [1,2,3]
-                    # neighbor is 5
-                    # we need this --> [1,2,3,5]
-                    # need to make a copy of the current path, and enqueue to it
-                    # path_copy = current_path.copy()
-                    path_copy = [neighbor] + current_path
-                    q.enqueue(path_copy)
+        return None
+
+#    def dfs(self, starting_vertex, destination_vertex):
+#        """
+#        Return a list containing a path from
+#        starting_vertex to destination_vertex in
+#        depth-first order.
+#        """
+#        # make a stack
+#        stack = Stack()
+#
+#        # make a set to track which nodes we have visited
+#        visited = set()
+#
+#        # push the starting node
+#        # adding brackets gets us the PATH TO the starting vertex
+#        stack.push([starting_vertex])
+#
+#        # loop while the queue isn't empty
+#        while stack.size() > 0 :
+#            # dequeue, this is our current node
+#            current_path = stack.pop()
+#            current_node = current_path[-1]
+#
+#            # check if we have found our target node
+#            if current_node == destination_vertex:
+#                return current_path
+#
+#            # check if we've visited
+#            if current_node not in visited:
+#                print(current_node)
+#            # if not, go to the next node
+#            ## make as visited == add to visited set
+#                visited.add(current_node)
+#            ## get the neighbors
+#                neighbors = self.get_neighbors(current_node)
+#            ## enqueue the PATH TO the neighbors
+#                for neighbor in neighbors:
+#                    # ex.)
+#                    # suppose we are at node 3, current_path is [1,2,3]
+#                    # neighbor is 5
+#                    # we need this --> [1,2,3,5]
+#                    # need to make a copy of the current path, and enqueue to it
+#                    # path_copy = current_path.copy()
+#                    path_copy = [neighbor] + current_path
+#                    stack.push(path_copy)
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -180,44 +260,27 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        # make a stack
-        stack = Stack()
+        s = Stack()
+        visited = {}
 
-        # make a set to track which nodes we have visited
-        visited = set()
+        s.push(starting_vertex)
+        visited[starting_vertex] = None
+        while s.size() > 0:
+            name = s.pop()
+            
+            if name == destination_vertex:
+                path = []
+                cur = name
+                while cur:
+                    path.append(cur)
+                    cur = visited[cur]
 
-        # push the starting node
-        # adding brackets gets us the PATH TO the starting vertex
-        stack.push([starting_vertex])
+                return list(reversed(path))
 
-        # loop while the queue isn't empty
-        while stack.size() > 0 :
-            # dequeue, this is our current node
-            current_path = stack.pop()
-            current_node = current_path[-1]
-
-            # check if we have found our target node
-            if current_node == destination_vertex:
-                return current_path
-
-            # check if we've visited
-            if current_node not in visited:
-                print(current_node)
-            # if not, go to the next node
-            ## make as visited == add to visited set
-                visited.add(current_node)
-            ## get the neighbors
-                neighbors = self.get_neighbors(current_node)
-            ## enqueue the PATH TO the neighbors
-                for neighbor in neighbors:
-                    # ex.)
-                    # suppose we are at node 3, current_path is [1,2,3]
-                    # neighbor is 5
-                    # we need this --> [1,2,3,5]
-                    # need to make a copy of the current path, and enqueue to it
-                    # path_copy = current_path.copy()
-                    path_copy = [neighbor] + current_path
-                    stack.push(path_copy)
+            for neighbor in self.get_neighbors(name):
+                if neighbor not in visited:
+                    s.push(neighbor)
+                    visited[neighbor] = name
 
     def dfs_recursive(self, starting_vertex, destination_vertex):
         """
@@ -227,18 +290,28 @@ class Graph:
 
         This should be done using recursion.
         """
+        # if we are already at our destination, return
+        # acts as our base case here
         if starting_vertex == destination_vertex:
             return [starting_vertex]
         
+        # else for every neighbor in our vertices
         for neighbor in self.get_neighbors(starting_vertex):
             
+            # if neighbor isn't in our cache set
             if neighbor not in self.visited_cache:
+                
+                ## add the neighbor to the cache
                 self.visited_cache.add(neighbor)
+                # found
                 found = self.dfs_recursive(neighbor, destination_vertex)
                 
                 if found:
+                    # if found, clear cache
                     self.visited_cache.clear()
+                    # insert 0 at the starting vertex
                     found.insert(0, starting_vertex)
+                    # then return found
                     return found
 
         self.visited_cache.clear()
