@@ -1,5 +1,18 @@
 """
 Simple graph implementation
+
+DFT/DFS vs. BFT/BFS
+
+When is DFS Better?
+-not guaranteed to find longest path
+-might find the longest path
+-if the node you're looking for is a leaf
+-or if you suspect the node is at the end of the graph
+-can be implemented recursively or randomly
+
+When is BFS Better?
+-finds the shortest path
+
 """
 from util import Stack, Queue  # These may come in handy
 
@@ -102,6 +115,9 @@ class Graph:
         # need a base case
 
         # needs to call itself
+
+        We don't need a stack in the recursive case because
+        the recursion acts like a stack
         """
 
         # we don't need a new stack 
@@ -110,6 +126,7 @@ class Graph:
         if vertex not in visited:
             print(vertex)
 
+            # add if its not in visited set/list
             visited.add(vertex)
 
             neighbors = self.get_neighbors(vertex)
@@ -282,7 +299,42 @@ class Graph:
                     s.push(neighbor)
                     visited[neighbor] = name
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
+#    def dfs_recursive(self, starting_vertex, destination_vertex):
+#        """
+#        Return a list containing a path from
+#        starting_vertex to destination_vertex in
+#        depth-first order.
+#
+#        This should be done using recursion.
+#        """
+#        # if we are already at our destination, return
+#        # acts as our base case here
+#        if starting_vertex == destination_vertex:
+#            return [starting_vertex]
+#        
+#        # else for every neighbor in our vertices
+#        for neighbor in self.get_neighbors(starting_vertex):
+#            
+#            # if neighbor isn't in our cache set
+#            if neighbor not in self.visited_cache:
+#                
+#                ## add the neighbor to the cache
+#                self.visited_cache.add(neighbor)
+#                # found
+#                found = self.dfs_recursive(neighbor, destination_vertex)
+#                
+#                if found:
+#                    # if found, clear cache
+#                    self.visited_cache.clear()
+#                    # insert 0 at the starting vertex
+#                    found.insert(0, starting_vertex)
+#                    # then return found
+#                    return found
+#
+#        self.visited_cache.clear()
+
+    # in class recursion
+    def dfs_recursive(self, starting_vertex, destination_vertex, path=[], visited=set()):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -290,31 +342,27 @@ class Graph:
 
         This should be done using recursion.
         """
-        # if we are already at our destination, return
-        # acts as our base case here
-        if starting_vertex == destination_vertex:
-            return [starting_vertex]
-        
-        # else for every neighbor in our vertices
-        for neighbor in self.get_neighbors(starting_vertex):
-            
-            # if neighbor isn't in our cache set
-            if neighbor not in self.visited_cache:
-                
-                ## add the neighbor to the cache
-                self.visited_cache.add(neighbor)
-                # found
-                found = self.dfs_recursive(neighbor, destination_vertex)
-                
-                if found:
-                    # if found, clear cache
-                    self.visited_cache.clear()
-                    # insert 0 at the starting vertex
-                    found.insert(0, starting_vertex)
-                    # then return found
-                    return found
+        if len(path) == 0:
+            return path.append(starting_vertex)
 
-        self.visited_cache.clear()
+        if starting_vertex == destination_vertex:
+            return path
+
+        if starting_vertex not in visited:
+            visited.add(starting_vertex)
+
+            neighbors = self.get_neighbors(starting_vertex)
+
+            for neighbor in neighbors:
+                path_copy = path + [neighbor]
+
+                # only return if we found the destination vertex
+
+                result = self.dfs_recursive(neighbor, destination_vertex, path_copy, visited)
+                if result is not None:
+                    return result
+        else:
+            return None
 
 
 
